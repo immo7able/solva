@@ -50,8 +50,8 @@ public class TransactionServiceTest {
         transaction.setAccountFrom(1L);
         transaction.setAccountTo(2L);
         transaction.setDatetime(LocalDateTime.now());
-        transaction.setCurrencyShortname("USD");
-        transaction.setSum(BigDecimal.valueOf(1500));
+        transaction.setCurrencyShortname("KZT");
+        transaction.setSum(BigDecimal.valueOf(500000));
         transaction.setExpenseCategory(Category.SERVICE);
 
         Limit limit = new Limit();
@@ -60,16 +60,19 @@ public class TransactionServiceTest {
         limit.setLimitCurrencyShortname("USD");
         limit.setExpenseCategory(Category.SERVICE);
 
-        ExchangeRate usdExchangeRate = new ExchangeRate("USD/USD", LocalDate.now(), BigDecimal.ONE);
+        ExchangeRate usdExchangeRate = new ExchangeRate("USD/KZT", LocalDate.now(), BigDecimal.ONE);
 
         when(limitRepository.findTopByExpenseCategoryOrderByLimitDatetimeDesc(Category.SERVICE))
                 .thenReturn(Mono.just(limit));
 
-        when(exchangeRateRepository.findTopByCurrencyPairOrderByDateDesc("USD/USD"))
+        when(exchangeRateRepository.findTopByCurrencyPairOrderByDateDesc("USD/KZT"))
                 .thenReturn(Mono.just(usdExchangeRate));
 
         when(transactionRepository.findAllByExpenseCategory(Category.SERVICE))
-                .thenReturn(Flux.just(transaction));
+                .thenReturn(Flux.just(
+                        transaction,
+                        new Transaction(1L, 2L, "KZT", BigDecimal.valueOf(300000), Category.SERVICE)
+                ));
 
         when(transactionRepository.save(any(Transaction.class)))
                 .thenReturn(Mono.just(transaction));
@@ -89,8 +92,8 @@ public class TransactionServiceTest {
         transaction.setAccountFrom(1L);
         transaction.setAccountTo(2L);
         transaction.setDatetime(LocalDateTime.now());
-        transaction.setCurrencyShortname("USD");
-        transaction.setSum(BigDecimal.valueOf(500));
+        transaction.setCurrencyShortname("KZT");
+        transaction.setSum(BigDecimal.valueOf(50000));
         transaction.setExpenseCategory(Category.SERVICE);
 
         Limit limit = new Limit();
@@ -99,18 +102,20 @@ public class TransactionServiceTest {
         limit.setLimitCurrencyShortname("USD");
         limit.setExpenseCategory(Category.SERVICE);
 
-        ExchangeRate usdExchangeRate = new ExchangeRate("USD/USD", LocalDate.now(), BigDecimal.ONE);
+        ExchangeRate usdExchangeRate = new ExchangeRate("USD/KZT", LocalDate.now(), BigDecimal.valueOf(477));
 
         when(limitRepository.findTopByExpenseCategoryOrderByLimitDatetimeDesc(Category.SERVICE))
                 .thenReturn(Mono.just(limit));
 
-        when(exchangeRateRepository.findTopByCurrencyPairOrderByDateDesc("USD/USD"))
+        when(exchangeRateRepository.findTopByCurrencyPairOrderByDateDesc("USD/KZT"))
                 .thenReturn(Mono.just(usdExchangeRate));
 
         when(transactionRepository.findAllByExpenseCategory(Category.SERVICE))
                 .thenReturn(Flux.just(
                         transaction,
-                        new Transaction(1L, 2L, "KZT", BigDecimal.valueOf(300000), Category.SERVICE)));
+                        new Transaction(1L, 2L, "KZT", BigDecimal.valueOf(300000), Category.SERVICE)
+                        )
+                );
 
         when(transactionRepository.save(any(Transaction.class)))
                 .thenReturn(Mono.just(transaction));
