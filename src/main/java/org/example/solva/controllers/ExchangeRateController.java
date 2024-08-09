@@ -1,6 +1,7 @@
 package org.example.solva.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,9 +22,9 @@ public class ExchangeRateController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешное добавление курса")
     })
-    @PostMapping(value = "/{currency1}/{currency2}")
-    public Mono<ResponseEntity<Void>> fetchAndSaveExchangeRate(@PathVariable String currency1, @PathVariable String currency2) {
-        return exchangeRateService.fetchAndSaveExchangeRate(currency1+"/"+ currency2)
+    @PostMapping
+    public Mono<ResponseEntity<Void>> fetchAndSaveExchangeRate(@Schema(description = "Пара валют, например, USD/KZT", example = "USD/KZT") @RequestBody String currencyPair) {
+        return exchangeRateService.fetchAndSaveExchangeRate(currencyPair)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
     @Operation(summary = "Получить свежий курс", description = "Получает свежий курс выбранной валюты")
