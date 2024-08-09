@@ -22,8 +22,8 @@ public class ExchangeRateController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешное добавление курса")
     })
-    @PostMapping
-    public Mono<ResponseEntity<Void>> fetchAndSaveExchangeRate(@Schema(description = "Пара валют, например, USD/KZT", example = "USD/KZT") @RequestBody String currencyPair) {
+    @PostMapping("/")
+    public Mono<ResponseEntity<Void>> fetchAndSaveExchangeRate(@Schema(description = "Пара валют, например, USD/KZT", example = "USD/KZT") @RequestParam String currencyPair) {
         return exchangeRateService.fetchAndSaveExchangeRate(currencyPair)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
